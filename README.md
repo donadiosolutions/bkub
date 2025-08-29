@@ -47,12 +47,14 @@ make setup
 ### Configuration Files
 
 #### `.flake8` and `setup.cfg`
+
 - **Purpose**: Configures flake8 linting rules and mypy type checking
 - **Line length**: 120 characters
 - **Exclusions**: Standard build/cache directories
 - **Special rules**: Relaxed documentation requirements for tests, allows unused imports in `__init__.py`
 
 #### `pyproject.toml`
+
 - **Purpose**: Modern Python project configuration including black, isort, pyright, and pytest settings
 - **Black configuration**: 120 character line length, Python 3.13 target
 - **isort configuration**: Black-compatible profile
@@ -62,11 +64,13 @@ make setup
 ### Running Linting Locally
 
 1. **Install dependencies** (if not already installed):
+
    ```bash
    pip install flake8 pyright black isort pytest pytest-cov
    ```
 
 2. **Run individual tools**:
+
    ```bash
    # Lint code
    flake8 bootServer/ tests/
@@ -84,6 +88,7 @@ make setup
    ```
 
 3. **Run all quality checks**:
+
    ```bash
    make quality
    ```
@@ -93,16 +98,20 @@ make setup
 The project includes comprehensive pre-commit hooks that automatically run before each commit to ensure code quality and security. The hooks are set up via `make setup` and include:
 
 #### What Gets Checked
+
 - **🔍 flake8 linting**: PEP 8 compliance and error detection on staged Python files
 - **🔍 pyright type checking**: Static type analysis across the entire project
 - **🔍 Code formatting**: black and isort formatting validation
 - **🔍 Security scanning**: gitleaks detection of potential secrets and credentials
 
 #### Setup and Usage
+
 1. **Initial setup** (run once):
+
    ```bash
    make setup
    ```
+
    This installs gitleaks and configures the enhanced pre-commit hooks.
 
 2. **Normal development**: The hooks run automatically on `git commit`
@@ -110,11 +119,13 @@ The project includes comprehensive pre-commit hooks that automatically run befor
    - ❌ Any check fails → commit is blocked with helpful error messages
 
 3. **Bypass hooks** (not recommended):
+
    ```bash
    git commit --no-verify
    ```
 
 #### Alternative: pre-commit Framework
+
 For teams preferring the standard pre-commit framework, a `.pre-commit-config.yaml` file is provided:
 
 ```bash
@@ -131,6 +142,7 @@ pre-commit run --all-files
 ### Development Workflow
 
 1. **Setup environment** (first time):
+
    ```bash
    make setup  # Installs tools and configures enhanced pre-commit hooks
    ```
@@ -138,19 +150,23 @@ pre-commit run --all-files
 2. **Make your changes**
 
 3. **Format code automatically**:
+
    ```bash
    make format
    ```
 
 4. **Run quality checks**:
+
    ```bash
    make quality  # Runs all linting, type checking, and formatting checks
    ```
 
 5. **Commit your changes**:
+
    ```bash
    git commit -m "your commit message"
    ```
+
    The enhanced pre-commit hook will automatically run all checks:
    - If all checks pass ✅, the commit proceeds
    - If any check fails ❌, you'll get specific error messages and the commit is blocked
@@ -160,7 +176,9 @@ pre-commit run --all-files
 The CI/CD pipeline will also run these same quality checks to ensure consistency.
 
 #### Quick Fix Commands
+
 If pre-commit checks fail, these commands can help:
+
 - `make format` - Auto-fix formatting issues
 - `make quality` - Run all checks locally before committing
 - Check specific error messages for manual fixes needed
