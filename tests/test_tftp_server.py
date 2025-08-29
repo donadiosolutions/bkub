@@ -53,6 +53,7 @@ def test_tftp_not_enabled_does_not_bind(tmp_path: Path):
     server = bootServer(root_dir=str(tmp_path), http_port=0, tftp_port=0, enable_tftp=False)
     server.start()
     try:
-        assert not getattr(server, "_tftp_sock")
+        # public API: tftp_sock_port should be None when TFTP is not enabled
+        assert server.tftp_sock_port is None
     finally:
         server.stop()
