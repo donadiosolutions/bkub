@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 import shutil
 import socket
 import ssl
@@ -11,6 +10,7 @@ from tempfile import TemporaryDirectory
 import pytest
 
 from bootServer import bootServer
+
 
 def _http_get_tls(host: str, port: int, path: str, timeout: float = 2.0) -> bytes:
     ctx = ssl.create_default_context()
@@ -34,6 +34,7 @@ def _http_get_tls(host: str, port: int, path: str, timeout: float = 2.0) -> byte
     finally:
         s.close()
 
+
 @pytest.mark.skipif(not shutil.which("openssl"), reason="openssl not available to create test cert")
 def test_https_serves_file(tmp_path: Path):
     # create self-signed cert using openssl
@@ -42,21 +43,41 @@ def test_https_serves_file(tmp_path: Path):
         key = td_path / "key.pem"
         cert = td_path / "cert.pem"
         # generate key and cert (rsa 2048, self-signed, valid 1 day)
-        subprocess.check_call([
-            "openssl", "req", "-x509", "-nodes", "-days", "1",
-            "-newkey", "rsa:2048",
-            "-subj", "/CN=127.0.0.1",
-            "-keyout", str(key),
-            "-out", str(cert),
-        ])
+        subprocess.check_call(
+            [
+                "openssl",
+                "req",
+                "-x509",
+                "-nodes",
+                "-days",
+                "1",
+                "-newkey",
+                "rsa:2048",
+                "-subj",
+                "/CN=127.0.0.1",
+                "-keyout",
+                str(key),
+                "-out",
+                str(cert),
+            ]
+        )
         # prepare served file
         (tmp_path / "index.html").write_text("secure-ok")
         # start server with HTTPS enabled
-        server = bootServer(root_dir=str(tmp_path), http_port=0, tftp_port=0, enable_tftp=False, enable_https=True, https_port=0, ssl_certfile=str(cert), ssl_keyfile=str(key))
+        server = bootServer(
+            root_dir=str(tmp_path),
+            http_port=0,
+            tftp_port=0,
+            enable_tftp=False,
+            enable_https=True,
+            https_port=0,
+            ssl_certfile=str(cert),
+            ssl_keyfile=str(key),
+        )
         server.start()
         try:
+            assert server.https_sock_port is not None
             port = server.https_sock_port
-            assert port is not None
             resp = _http_get_tls("127.0.0.1", port, "/index.html")
             assert b"200 OK" in resp
             assert b"secure-ok" in resp

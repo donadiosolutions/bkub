@@ -1,0 +1,8 @@
+// ... existing code ...
+{
+  "venvPath": "",
+  "pythonVersion": "3.13",
+  "typeCheckingMode": "basic",
+  "include": ["bootServer", "tests"]
+}
+// ... existing code ...

@@ -1,13 +1,31 @@
 # Makefile for running tests
-.PHONY: test
+.PHONY: test setup lint type-check format format-check quality
+
 test:
 	pytest -q
 
-.PHONY: setup
 setup: setup-gitleaks
 
+# Code quality targets
+lint:
+	flake8 bootServer/ tests/
+
+type-check:
+	pyright bootServer/ tests/
+
+format:
+	black --line-length 120 .
+	isort .
+
+format-check:
+	black --check --line-length 120 .
+	isort --check-only .
+
+quality: lint type-check format-check
+	@echo "All quality checks passed!"
+
 setup-gitleaks:
-	@echo "Setting up gitleaks and Git hook locally"
+	@echo "Setting up gitleaks and enhanced Git pre-commit hooks locally"
 	@set -e; \
 	# If gitleaks already available, skip installation; otherwise attempt to install
 	if command -v gitleaks >/dev/null 2>&1; then \
@@ -59,25 +77,24 @@ setup-gitleaks:
 	fi
 	@# Ensure gitleaks is on PATH
 	@command -v gitleaks >/dev/null 2>&1 || (echo "gitleaks not found on PATH after install" && exit 1)
-	@# Create a .githooks directory and a pre-commit hook that runs gitleaks
+	@# Check for required tools
+	@echo "Checking for required development tools..."
+	@command -v flake8 >/dev/null 2>&1 || (echo "⚠️  flake8 not found. Install with: pip install flake8" && exit 1)
+	@command -v pyright >/dev/null 2>&1 || (echo "⚠️  pyright not found. Install with: pip install pyright" && exit 1)
+	@command -v black >/dev/null 2>&1 || (echo "⚠️  black not found. Install with: pip install black" && exit 1)
+	@command -v isort >/dev/null 2>&1 || (echo "⚠️  isort not found. Install with: pip install isort" && exit 1)
+	@echo "✅ All required tools found"
+	@# Create .githooks directory and ensure the enhanced pre-commit hook is executable
 	mkdir -p .githooks
-	@printf '%s\n' '#!/usr/bin/env sh' \
-	'# Pre-commit hook: run gitleaks in detect mode on staged files; exit non-zero to block commit on findings.' \
-	'echo "Running gitleaks pre-commit scan..."' \
-	'# Run a quick scan of all staged files (if none, scan repo)' \
-	'STAGED="$$(git diff --cached --name-only --diff-filter=ACMRTUXB)"' \
-	'if [ -n "$$STAGED" ]; then' \
-	'	git --no-pager diff --name-only --cached | xargs -r gitleaks detect --source -' \
-	'	RC=$$?' \
-	'else' \
-	'	gitleaks detect --source . --config .gitleaks.toml --redact' \
-	'	RC=$$?' \
-	'fi' \
-	'if [ $$RC -ne 0 ]; then' \
-	'	echo "gitleaks detected potential secrets. Please resolve or add allowlist entries before committing."' \
-	'	exit $$RC' \
-	'fi' \
-	'exit 0' > .githooks/pre-commit && chmod +x .githooks/pre-commit
+	chmod +x .githooks/pre-commit
 	git config core.hooksPath .githooks
-	@echo "Configured git to use .githooks and created pre-commit hook to run gitleaks"
-	@echo "Setup complete: gitleaks and Git pre-commit hook configured"
+	@echo "✅ Configured git to use .githooks with enhanced pre-commit hook"
+	@echo "📋 Enhanced pre-commit hook includes:"
+	@echo "   • flake8 linting"
+	@echo "   • pyright type checking"
+	@echo "   • black/isort formatting checks"
+	@echo "   • gitleaks security scanning"
+	@echo "🎉 Setup complete: Enhanced pre-commit hooks configured"
+	@echo ""
+	@echo "💡 To install development dependencies if missing:"
+	@echo "   pip install flake8 pyright black isort pytest pytest-cov"

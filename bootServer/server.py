@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-import json
 import logging
-import os
-import socket
-import struct
 import threading
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler
 from pathlib import Path
 from typing import Any, Dict, Mapping, Optional
-import ssl
+
 #
 # import extracted servers
 from .http_server import HttpFileServer, HttpsFileServer
@@ -120,7 +116,14 @@ class bootServer:
         if self.enable_https:
             if not (self.ssl_certfile and self.ssl_keyfile):
                 raise ValueError("HTTPS enabled but certfile/keyfile not provided")
-            self._https = HttpsFileServer(self.root_dir, host=self.host, port=self.https_port, certfile=self.ssl_certfile, keyfile=self.ssl_keyfile, logger=self.logger)
+            self._https = HttpsFileServer(
+                self.root_dir,
+                host=self.host,
+                port=self.https_port,
+                certfile=self.ssl_certfile,
+                keyfile=self.ssl_keyfile,
+                logger=self.logger,
+            )
             self._https.start()
             self.https_sock_port = self._https.sock_port
         else:

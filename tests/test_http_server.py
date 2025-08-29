@@ -1,11 +1,8 @@
 import socket
-import threading
-import time
 from pathlib import Path
 
-import pytest
-
 from bootServer import bootServer
+
 
 def _http_get(host: str, port: int, path: str, timeout: float = 2.0) -> bytes:
     s = socket.create_connection((host, port), timeout=timeout)
@@ -22,6 +19,7 @@ def _http_get(host: str, port: int, path: str, timeout: float = 2.0) -> bytes:
     finally:
         s.close()
 
+
 def test_http_serves_file(tmp_path: Path):
     content = b"hello-http"
     fpath = tmp_path / "file.txt"
@@ -30,12 +28,14 @@ def test_http_serves_file(tmp_path: Path):
     server = bootServer(root_dir=str(tmp_path), http_port=0, tftp_port=0, enable_tftp=False)
     server.start()
     try:
+        assert server.http_sock_port is not None
         port = server.http_sock_port
         resp = _http_get("127.0.0.1", port, "/file.txt")
         assert b"200 OK" in resp
         assert content in resp
     finally:
         server.stop()
+
 
 def test_http_block_path_traversal(tmp_path: Path):
     # create a file outside served dir
@@ -44,6 +44,7 @@ def test_http_block_path_traversal(tmp_path: Path):
     server = bootServer(root_dir=str(tmp_path), http_port=0, tftp_port=0, enable_tftp=False)
     server.start()
     try:
+        assert server.http_sock_port is not None
         port = server.http_sock_port
         # attempt to traverse
         resp = _http_get("127.0.0.1", port, "/../outside.txt")
@@ -52,10 +53,12 @@ def test_http_block_path_traversal(tmp_path: Path):
     finally:
         server.stop()
 
+
 def test_http_404_for_missing(tmp_path: Path):
     server = bootServer(root_dir=str(tmp_path), http_port=0, tftp_port=0, enable_tftp=False)
     server.start()
     try:
+        assert server.http_sock_port is not None
         port = server.http_sock_port
         resp = _http_get("127.0.0.1", port, "/no-such-file")
         assert b"404" in resp

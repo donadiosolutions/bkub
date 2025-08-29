@@ -1,10 +1,9 @@
-# ... existing code ...
 from __future__ import annotations
 
+import logging
 import socket
 import struct
 import threading
-import logging
 from pathlib import Path
 from typing import Optional, Tuple
 
@@ -18,7 +17,9 @@ class TftpServer:
     OP_ERROR = 5
     BLOCK_SIZE = 512
 
-    def __init__(self, root_dir: str | Path, host: str = "0.0.0.0", port: int = 69, logger: Optional[logging.Logger] = None) -> None:
+    def __init__(
+        self, root_dir: str | Path, host: str = "0.0.0.0", port: int = 69, logger: Optional[logging.Logger] = None
+    ) -> None:
         self.root_dir = Path(root_dir).resolve()
         self.host = host
         self.port = port
@@ -121,7 +122,9 @@ class TftpServer:
                             break
                         ack_opcode, ack_block = struct.unpack("!HH", ack[:4])
                         if ack_opcode != self.OP_ACK or ack_block != block_num:
-                            self.logger.warning("Unexpected ACK %s %s from %s:%d", ack_opcode, ack_block, addr[0], addr[1])
+                            self.logger.warning(
+                                "Unexpected ACK %s %s from %s:%d", ack_opcode, ack_block, addr[0], addr[1]
+                            )
                             break
                     finally:
                         tx.close()
@@ -142,4 +145,3 @@ class TftpServer:
             sock.sendto(pkt, addr)
         except Exception:
             self.logger.exception("Failed to send TFTP error to %s:%d", addr[0], addr[1])
-# ... existing code ...

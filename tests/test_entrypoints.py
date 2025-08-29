@@ -4,8 +4,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 
 def _python() -> str:
     # Use the same interpreter running the tests

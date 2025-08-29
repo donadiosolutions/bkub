@@ -1,12 +1,13 @@
-# ... existing code ...
 import socket
 import struct
 from pathlib import Path
 
 from bootServer import bootServer
 
+
 def _make_rrq(filename: str, mode: str = "octet") -> bytes:
     return struct.pack("!H", 1) + filename.encode("utf-8") + b"\x00" + mode.encode("utf-8") + b"\x00"
+
 
 def test_integration_http_and_tftp(tmp_path: Path):
     (tmp_path / "index.html").write_text("ok")
@@ -14,6 +15,8 @@ def test_integration_http_and_tftp(tmp_path: Path):
     server = bootServer(root_dir=str(tmp_path), http_port=0, tftp_port=0, enable_tftp=True)
     server.start()
     try:
+        assert server.http_sock_port is not None
+        assert server.tftp_sock_port is not None
         http_port = server.http_sock_port
         tftp_port = server.tftp_sock_port
 

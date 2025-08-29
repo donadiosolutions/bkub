@@ -1,10 +1,9 @@
-# ... existing code ...
 from __future__ import annotations
 
 import logging
 import ssl
 import threading
-from http.server import ThreadingHTTPServer, SimpleHTTPRequestHandler
+from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Optional
 
@@ -12,7 +11,9 @@ LOG = logging.getLogger(__name__)
 
 
 class HttpFileServer:
-    def __init__(self, root_dir: str | Path, host: str = "0.0.0.0", port: int = 80, logger: Optional[logging.Logger] = None) -> None:
+    def __init__(
+        self, root_dir: str | Path, host: str = "0.0.0.0", port: int = 80, logger: Optional[logging.Logger] = None
+    ) -> None:
         self.root_dir = Path(root_dir).resolve()
         self.host = host
         self.port = port
@@ -25,7 +26,9 @@ class HttpFileServer:
         if self._server:
             return
         handler_cls = SimpleHTTPRequestHandler
-        server = ThreadingHTTPServer((self.host, self.port), lambda *args, **kwargs: handler_cls(*args, directory=str(self.root_dir), **kwargs))
+        server = ThreadingHTTPServer(
+            (self.host, self.port), lambda *args, **kwargs: handler_cls(*args, directory=str(self.root_dir), **kwargs)
+        )
         self._server = server
         self.sock_port = server.server_address[1]
         self.logger.info("HTTP server serving %s on %s:%d", self.root_dir, self.host, self.sock_port)
@@ -51,7 +54,15 @@ class HttpFileServer:
 
 
 class HttpsFileServer:
-    def __init__(self, root_dir: str | Path, host: str = "0.0.0.0", port: int = 443, certfile: str | None = None, keyfile: str | None = None, logger: Optional[logging.Logger] = None) -> None:
+    def __init__(
+        self,
+        root_dir: str | Path,
+        host: str = "0.0.0.0",
+        port: int = 443,
+        certfile: str | None = None,
+        keyfile: str | None = None,
+        logger: Optional[logging.Logger] = None,
+    ) -> None:
         self.root_dir = Path(root_dir).resolve()
         self.host = host
         self.port = port
@@ -68,7 +79,9 @@ class HttpsFileServer:
         if not self.certfile or not self.keyfile:
             raise ValueError("Both certfile and keyfile are required for HTTPS")
         handler_cls = SimpleHTTPRequestHandler
-        server = ThreadingHTTPServer((self.host, self.port), lambda *args, **kwargs: handler_cls(*args, directory=str(self.root_dir), **kwargs))
+        server = ThreadingHTTPServer(
+            (self.host, self.port), lambda *args, **kwargs: handler_cls(*args, directory=str(self.root_dir), **kwargs)
+        )
         # create SSL context with reasonable defaults, require TLS >= 1.2
         ctx = ssl.create_default_context(purpose=ssl.Purpose.CLIENT_AUTH)
         try:
@@ -101,4 +114,3 @@ class HttpsFileServer:
             self._thread.join(timeout=2.0)
             self._thread = None
         self.sock_port = None
-# ... existing code ...

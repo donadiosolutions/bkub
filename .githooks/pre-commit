@@ -1,9 +1,86 @@
 #!/usr/bin/env sh
-# Pre-commit hook: run gitleaks in detect mode; exit non-zero to block commit on findings.
-echo "Running gitleaks pre-commit scan..."
-gitleaks detect --source . --config .gitleaks.toml --redact
-if [ $? -ne 0 ]; then
-	echo "gitleaks detected potential secrets. Please resolve or add allowlist entries before committing."
-	exit 1
+# Pre-commit hook: run linting, type checking, formatting, and security checks
+
+echo "Running pre-commit checks..."
+
+# Exit codes for individual checks
+LINT_RC=0
+TYPE_RC=0
+FORMAT_RC=0
+GITLEAKS_RC=0
+
+# Get staged Python files
+STAGED_PY_FILES=$(git diff --cached --name-only --diff-filter=ACMRTUXB | grep '\.py$')
+
+if [ -n "$STAGED_PY_FILES" ]; then
+    echo "Found staged Python files, running code quality checks..."
+
+    # Run flake8 on staged Python files
+    echo "🔍 Running flake8 linting..."
+    echo "$STAGED_PY_FILES" | xargs flake8
+    LINT_RC=$?
+    if [ $LINT_RC -ne 0 ]; then
+        echo "❌ flake8 failed. Please fix linting issues."
+    else
+        echo "✅ flake8 passed"
+    fi
+
+    # Run pyright type checking on the entire project (it's fast and handles dependencies)
+    echo "🔍 Running pyright type checking..."
+    pyright bootServer/ tests/
+    TYPE_RC=$?
+    if [ $TYPE_RC -ne 0 ]; then
+        echo "❌ pyright failed. Please fix type checking issues."
+    else
+        echo "✅ pyright passed"
+    fi
+
+    # Run formatting checks
+    echo "🔍 Checking code formatting..."
+    black --check --line-length 120 --quiet .
+    BLACK_RC=$?
+    isort --check-only --quiet .
+    ISORT_RC=$?
+
+    if [ $BLACK_RC -ne 0 ] || [ $ISORT_RC -ne 0 ]; then
+        FORMAT_RC=1
+        echo "❌ Code formatting check failed."
+        if [ $BLACK_RC -ne 0 ]; then
+            echo "  - Run 'black --line-length 120 .' to fix black formatting"
+        fi
+        if [ $ISORT_RC -ne 0 ]; then
+            echo "  - Run 'isort .' to fix import sorting"
+        fi
+        echo "  - Or run 'make format' to fix all formatting issues"
+    else
+        echo "✅ Code formatting passed"
+    fi
+else
+    echo "No staged Python files found, skipping code quality checks"
 fi
+
+# Always run gitleaks security check
+echo "🔍 Running gitleaks security scan..."
+# Run gitleaks on the entire repository with config file
+gitleaks detect --source . --config .gitleaks.toml --redact
+GITLEAKS_RC=$?
+
+if [ $GITLEAKS_RC -ne 0 ]; then
+    echo "❌ gitleaks detected potential secrets. Please resolve or add allowlist entries before committing."
+else
+    echo "✅ gitleaks security scan passed"
+fi
+
+# Check if any checks failed
+if [ $LINT_RC -ne 0 ] || [ $TYPE_RC -ne 0 ] || [ $FORMAT_RC -ne 0 ] || [ $GITLEAKS_RC -ne 0 ]; then
+    echo ""
+    echo "❌ Pre-commit checks failed. Please fix the issues above."
+    echo "💡 You can run 'make quality' to run all checks locally"
+    echo "💡 You can run 'make format' to auto-fix formatting issues"
+    echo "💡 Use 'git commit --no-verify' to bypass these checks (not recommended)"
+    exit 1
+fi
+
+echo ""
+echo "✅ All pre-commit checks passed!"
 exit 0

@@ -13,7 +13,9 @@ LOG = logging.getLogger("bootServer.cli")
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="serve-boot-artifacts", description="Serve boot artifacts over HTTP (and optional HTTPS) and TFTP")
+    p = argparse.ArgumentParser(
+        prog="serve-boot-artifacts", description="Serve boot artifacts over HTTP (and optional HTTPS) and TFTP"
+    )
     p.add_argument("--root-dir", "-r", default=".", help="Directory to serve files from")
     p.add_argument("--http-port", type=int, default=8080, help="HTTP port (0 for ephemeral)")
     p.add_argument("--tftp-port", type=int, default=69, help="TFTP port (0 for ephemeral)")
@@ -32,7 +34,10 @@ def main(argv: Optional[list[str]] = None) -> int:
     parser = _build_parser()
     args = parser.parse_args(argv)
 
-    logging.basicConfig(level=getattr(logging, args.log_level.upper(), logging.INFO), format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    logging.basicConfig(
+        level=getattr(logging, args.log_level.upper(), logging.INFO),
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
 
     root = Path(args.root_dir).resolve()
     if not root.exists():
@@ -70,7 +75,12 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     try:
         server.start()
-        LOG.info("Servers started: HTTP=%s TFTP=%s HTTPS=%s", server.http_sock_port, server.tftp_sock_port, server.https_sock_port)
+        LOG.info(
+            "Servers started: HTTP=%s TFTP=%s HTTPS=%s",
+            server.http_sock_port,
+            server.tftp_sock_port,
+            server.https_sock_port,
+        )
         # wait until signal
         while not stop_requested:
             signal.pause()
@@ -92,3 +102,4 @@ def main(argv: Optional[list[str]] = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+# Test comment
