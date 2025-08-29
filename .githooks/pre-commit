@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# Pre-commit hook: run gitleaks in detect mode; exit non-zero to block commit on findings.
+echo "Running gitleaks pre-commit scan..."
+gitleaks detect --source . --config .gitleaks.toml --redact
+if [ $? -ne 0 ]; then
+	echo "gitleaks detected potential secrets. Please resolve or add allowlist entries before committing."
+	exit 1
+fi
+exit 0

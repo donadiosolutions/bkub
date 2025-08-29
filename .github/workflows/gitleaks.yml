@@ -1,0 +1,26 @@
+# .github/workflows/gitleaks.yml
+name: gitleaks-scan
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  gitleaks:
+    name: Run gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run gitleaks scan
+        uses: zricethezav/gitleaks-action@v1
+        with:
+          config_path: .gitleaks.toml
+          args: --redact

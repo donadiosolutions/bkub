@@ -1,0 +1,60 @@
+# .gitleaks.toml
+title = "gitleaks config"
+
+[metadata]
+  author = "Bernardo Donadio <bcdonadio@bcdonadio.com>"
+
+[allowlist]
+  description = "Ignore generated, non-commited files from scanning"
+  paths = ["^boot/.*", "^boot-artifacts/.*"]
+  repositories = [".*"]
+
+[[rules]]
+  description = "AWS Access Key ID"
+  id = "AWS-ACCESS-KEY-ID"
+  regex = '''AKIA[0-9A-Z]{16}'''
+  tags = ["key", "aws"]
+
+[[rules]]
+  description = "AWS Secret Access Key"
+  id = "AWS-SECRET-ACCESS-KEY"
+  regex = '''(?i)aws(.{0,20})?(secret|secret_access_key)(.{0,20})?[:=]\s*['"]?[0-9a-zA-Z/+]{40}['"]?'''
+  tags = ["key", "aws", "secret"]
+
+[[rules]]
+  description = "Generic API key (long, base64-like)"
+  id = "GENERIC-API-KEY-LONG"
+  regex = '''(?i)[A-Za-z0-9_\-]{20,}'''
+  entropy = 4.5
+  tags = ["apikey", "generic"]
+
+[[rules]]
+  description = "Private RSA key"
+  id = "RSA-PRIVATE-KEY"
+  regex = '''-----BEGIN RSA PRIVATE KEY-----'''
+  tags = ["key", "rsa", "private"]
+
+[[rules]]
+  description = "SSH (OpenSSH) private key"
+  id = "OPENSSH-PRIVATE-KEY"
+  regex = '''-----BEGIN OPENSSH PRIVATE KEY-----'''
+  tags = ["key", "ssh", "private"]
+
+[[rules]]
+  description = "Google API key"
+  id = "GOOGLE-API-KEY"
+  regex = '''AIza[0-9A-Za-z-_]{35}'''
+  tags = ["key", "google"]
+
+[[rules]]
+  description = "Slack token"
+  id = "SLACK-TOKEN"
+  regex = '''xox[baprs]-[0-9]{12}-[0-9]{12}-[a-zA-Z0-9]{24}'''
+  tags = ["slack", "token"]
+
+[[rules]]
+  description = "Generic API key (IPv4 address format w dots)"
+  id = "GENERIC-API-KEY-IPV4-FORMAT"
+  regex = '''(?i)\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?){4}\\b'''
+  entropy = 3.5
+  tags = ["apikey", "generic"]
