@@ -1,0 +1,128 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.pytest_cache/*
+.pytest_cache
+.python-version
+.mypy_cache/
+.mypy_cache
+.pyre/
+.pyright/
+.ropeproject/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+dist/
+build/
+eggs/
+*.egg-info/
+pip-wheel-metadata/
+pip-delete-this-directory.txt
+wheelhouse/
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Virtualenv/IDE/editor
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Python packaging/editor temp
+*.egg
+*.eggs
+*.whl
+*.pyd
+
+# Test / CI artifacts
+pytest-debug.log
+tox.log
+.nox/
+.cache/
+.cache/*
+.hypothesis/
+
+# Lint / formatter caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.black/
+isort/
+
+# Logs
+logs/
+*.log
+
+# Secrets / env
+.env
+.env.*.local
+.envrc
+.secrets/
+secret-*.json
+
+# Generated docs
+docs/_build/
+
+# OS / system images, boot and CoreOS / Ignition / Butane artifacts
+# Boot artifacts directory (project uses boot-artifacts/)
+boot-artifacts/*
+boot/*
+# CoreOS raw images, initramfs, and related generated images
+*.raw
+*.raw.xz
+*coreos*.raw*
+coreos-*.raw.xz
+initramfs-*.img
+initramfs*.img
+*.img
+# Ignition / Butane outputs
+*.ign
+*.ignition
+ignition.json
+*.ign.json
+# Butane intermediate or compiled files
+*.bu.out
+*.bu.compiled
+# Serve artifacts / transient HTTP/TFTP output
+served-artifacts/
+tmp/
+var/
+cache/
+# k3s / cluster artifacts (local)
+k3s-data/
+k3s-storage/
+kubeconfig
+kubeconfig.*
+k3s.log
+
+# Scripts generated outputs
+scripts/*.out
+scripts/*.log
+
+# IDE / editor local run configs
+.vscode/
+*.code-workspace
+
+# Misc
+*.pem
+*.key
+*.crt
+
+# Allowlist: keep repository source files and configs tracked
+!.github/
+!.gitignore
+!README*
+# Ensure empty-directory placeholders are tracked
+!!**/.gitkeep
+!**/.gitkeep

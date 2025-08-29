@@ -1,0 +1,61 @@
+version: 1.5.0
+variant: fcos
+metadata:
+  name: butane-k3s
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - "ssh-ed25519 AAAA...REPLACE_WITH_YOUR_PUBLIC_KEY user@host"
+storage:
+  files:
+    - path: /etc/k3s/install-k3s.sh
+      mode: 0755
+      contents:
+        inline: |
+          #!/bin/bash
+          set -euo pipefail
+          # Create token file (random if not present)
+          if [ ! -f /etc/k3s/token ]; then
+            mkdir -p /etc/k3s
+            head -c 32 /dev/urandom | base64 > /etc/k3s/token
+            chmod 600 /etc/k3s/token
+          fi
+          # Install latest k3s (server). Remove INSTALL_K3S_VERSION to get latest automatically.
+          curl -sfL https://get.k3s.io | sh -s - server --write-kubeconfig-mode 0644 --token-file /etc/k3s/token
+          # Ensure kubeconfig readable for core user
+          if [ -f /etc/rancher/k3s/k3s.yaml ]; then
+            chmod 0644 /etc/rancher/k3s/k3s.yaml
+          fi
+  directories:
+    - path: /var/log/journal
+      mode: 0755
+      recurse: true
+systemd:
+  units:
+    - name: k3s-install.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Install k3s (one-shot)
+        After=network-online.target
+        Wants=network-online.target
+        [Service]
+        Type=oneshot
+        RemainAfterExit=yes
+        ExecStart=/usr/bin/bash /etc/k3s/install-k3s.sh
+        TimeoutStartSec=600
+        [Install]
+        WantedBy=multi-user.target
+    - name: k3s-install-cleanup.service
+      enabled: true
+      contents: |
+        [Unit]
+        Description=Cleanup k3s installer (runs once after install)
+        After=k3s-install.service
+        Wants=k3s-install.service
+        [Service]
+        Type=oneshot
+        ExecStart=/usr/bin/bash -c 'systemctl disable k3s-install.service || true; rm -f /etc/k3s/install-k3s.sh || true; systemctl disable k3s-install-cleanup.service || true'
+        [Install]
+        WantedBy=multi-user.target
