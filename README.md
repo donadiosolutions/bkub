@@ -22,6 +22,9 @@ This project maintains high code quality standards using multiple linting and fo
 The project includes several make targets for code quality checks:
 
 ```bash
+# Setup development environment (installs gitleaks and enhanced git hooks)
+make setup
+
 # Run all linting checks
 make lint
 
@@ -34,14 +37,11 @@ make format
 # Check formatting without making changes
 make format-check
 
-# Run all quality checks (lint + type-check + format-check)
-make quality
-
 # Run tests
 make test
 
-# Setup development environment (installs gitleaks and enhanced git hooks)
-make setup
+# Run all quality checks (lint + type-check + format-check + tests)
+make quality
 ```
 
 ### Configuration Files
@@ -158,7 +158,7 @@ pre-commit run --all-files
 4. **Run quality checks**:
 
    ```bash
-   make quality  # Runs all linting, type checking, and formatting checks
+   make quality  # Runs all linting, type checking, formatting checks and tests
    ```
 
 5. **Commit your changes**:

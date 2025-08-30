@@ -1,10 +1,11 @@
 # Makefile for running tests
 .PHONY: test setup lint type-check format format-check quality
 
-test:
-	pytest -q
-
 setup: setup-gitleaks
+
+format:
+	black --line-length 120 .
+	isort .
 
 # Code quality targets
 lint:
@@ -13,15 +14,14 @@ lint:
 type-check:
 	pyright bootServer/ tests/
 
-format:
-	black --line-length 120 .
-	isort .
-
 format-check:
 	black --check --line-length 120 .
 	isort --check-only .
 
-quality: lint type-check format-check
+test:
+	pytest -q
+
+quality: lint type-check format-check test
 	@echo "All quality checks passed!"
 
 setup-gitleaks:

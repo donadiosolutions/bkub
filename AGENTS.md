@@ -15,7 +15,7 @@ artifacts over HTTP, HTTPS, and TFTP. Follow these guidelines when modifying the
 ## Required checks
 Before committing:
 1. Auto-format code: `make format`
-2. Lint, type-check, and format-check: `make quality`
+2. Lint, type-check, and format-check: `make lint type-check format-check`
 3. Run the test suite: `make test`
 
 Ensure all commands pass before creating a commit.
