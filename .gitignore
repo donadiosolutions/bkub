@@ -75,9 +75,8 @@ secret-*.json
 docs/_build/
 
 # OS / system images, boot and CoreOS / Ignition / Butane artifacts
-# Boot artifacts directory (project uses boot-artifacts/)
-boot-artifacts/*
-boot/*
+# Boot artifacts directory (project uses artifacts/)
+artifacts/*
 # CoreOS raw images, initramfs, and related generated images
 *.raw
 *.raw.xz
@@ -85,6 +84,7 @@ boot/*
 coreos-*.raw.xz
 initramfs-*.img
 initramfs*.img
+vmlinuz*
 *.img
 # Ignition / Butane outputs
 *.ign

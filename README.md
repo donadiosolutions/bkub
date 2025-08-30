@@ -190,7 +190,7 @@ If pre-commit checks fail, these commands can help:
 pip install -e .
 
 # Run the server
-serve-boot-artifacts
+./server
 
 # Or run tests
 make test

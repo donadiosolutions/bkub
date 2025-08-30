@@ -9,21 +9,19 @@ from typing import Optional
 
 from . import bootServer
 
-LOG = logging.getLogger("bootServer.cli")
+LOG = logging.getLogger("bootServer")
 
 
 def _build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
-        prog="serve-boot-artifacts", description="Serve boot artifacts over HTTP (and optional HTTPS) and TFTP"
-    )
-    p.add_argument("--root-dir", "-r", default=".", help="Directory to serve files from")
-    p.add_argument("--http-port", type=int, default=8080, help="HTTP port (0 for ephemeral)")
+    p = argparse.ArgumentParser(prog="bootServer", description="Serve boot artifacts over HTTP(S) and TFTP")
+    p.add_argument("--root-dir", "-r", default="artifacts", help="Directory to serve files from")
+    p.add_argument("--http-port", type=int, default=80, help="HTTP port (0 for ephemeral)")
     p.add_argument("--tftp-port", type=int, default=69, help="TFTP port (0 for ephemeral)")
     p.add_argument("--no-tftp", dest="enable_tftp", action="store_false", help="Disable TFTP serving")
     p.add_argument("--host", default="0.0.0.0", help="Host/interface to bind")
     # HTTPS options
     p.add_argument("--enable-https", dest="enable_https", action="store_true", help="Enable HTTPS alongside HTTP")
-    p.add_argument("--https-port", type=int, default=8443, help="HTTPS port (0 for ephemeral)")
+    p.add_argument("--https-port", type=int, default=443, help="HTTPS port (0 for ephemeral)")
     p.add_argument("--ssl-certfile", type=str, default=None, help="Path to SSL certificate file (PEM)")
     p.add_argument("--ssl-keyfile", type=str, default=None, help="Path to SSL private key file (PEM)")
     p.add_argument("--log-level", default="INFO", help="Logging level")

@@ -21,10 +21,10 @@ def test_module_entrypoint_help():
 def test_launcher_script_help(tmp_path: Path):
     """Running the repository launcher script with --help should exit 0 and print usage/help."""
     # ensure the launcher script is present at repository root
-    launcher = Path.cwd() / "serve-boot-artifacts"
+    launcher = Path.cwd() / "server"
     assert launcher.exists() and launcher.is_file()
     # invoke with --help
     proc = subprocess.run([_python(), str(launcher), "--help"], capture_output=True, text=True, timeout=5)
     assert proc.returncode == 0
     out = proc.stdout + proc.stderr
-    assert "usage" in out.lower() or "serve-boot-artifacts" in out
+    assert "usage" in out.lower() or "server" in out

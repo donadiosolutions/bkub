@@ -6,7 +6,7 @@ requires-python = ">=3.13"
 authors = [{name = "Auto Generated"}]
 
 [project.scripts]
-serve-boot-artifacts = "bootServer.cli:main"
+serve = "bootServer.cli:main"
 
 [build-system]
 requires = ["setuptools>=61.0"]

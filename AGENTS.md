@@ -28,7 +28,7 @@ Ensure all commands pass before creating a commit.
 - `bootServer/` – core application modules and CLI entry point.
 - `tests/` – test suite; add tests for new functionality.
 - `scripts/` – helper shell scripts.
-- `boot-artifacts/` – artifacts served by the server (not tracked).
+- `artifacts/` – artifacts served by the server (not tracked).
 
 ## Commit guidelines
 

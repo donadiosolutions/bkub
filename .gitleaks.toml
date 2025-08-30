@@ -6,7 +6,7 @@ title = "gitleaks config"
 
 [allowlist]
   description = "Ignore generated, non-commited files from scanning"
-  paths = ["^boot/.*", "^boot-artifacts/.*"]
+  paths = ["^artifacts/.*"]
   repositories = [".*"]
 
 [[rules]]

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# downloads latest Fedora CoreOS kernel and initramfs for x86_64 or aarch64 (or all) and writes them into ./boot-artifacts
+# downloads latest Fedora CoreOS kernel and initramfs for x86_64 or aarch64 (or all) and writes them into ./artifacts
 # also converts butane config butane-k3s.coreos.bu -> ignition.json if butane is installed
 
 REQUEST="${1:-x86_64}"   # Accept first arg: x86_64, aarch64, or all (default: x86_64)
 CHANNEL=stable
 SUPPORTED_ARCHES=("x86_64" "aarch64")
-WORKDIR="$(pwd)/boot-artifacts"
+WORKDIR="$(pwd)/artifacts"
 BUFILE="butane-k3s.coreos.bu"
 IGNITION_OUT="${WORKDIR}/ignition.json"
 

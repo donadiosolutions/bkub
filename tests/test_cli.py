@@ -97,7 +97,7 @@ def test_cli_module_main_sys_exit_help(monkeypatch: pytest.MonkeyPatch) -> None:
 
 def test_launcher_script_under_coverage(monkeypatch: pytest.MonkeyPatch) -> None:
     """Run repository launcher under coverage and assert sys.exit(0)."""
-    launcher = Path.cwd() / "serve-boot-artifacts"
+    launcher = Path.cwd() / "artifacts"
     assert launcher.exists()
     # Avoid executing bootServer.__main__ (which would sys.exit) so we can reach the launcher sys.exit(0)
     monkeypatch.setattr(runpy, "run_module", lambda *a, **k: None)
